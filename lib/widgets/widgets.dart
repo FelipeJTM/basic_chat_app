@@ -1,32 +1,34 @@
 import 'package:flutter/material.dart';
 
-const textInputDecorationForm = InputDecoration(
-    labelStyle: TextStyle(color: Colors.black38),
+import '../theme/constant_colors.dart';
+
+InputDecoration textInputDecorationForm = InputDecoration(
+    labelStyle: TextStyle(color: ConstantColors.basicFontColor),
     focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFFFFC400), width: 2)),
+        borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2)),
     enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFFFFC400), width: 2)),
+        borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2)),
     errorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFFFFC400), width: 2)),
+        borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2)),
     focusedErrorBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Color(0xFFFFC400), width: 2)));
+        borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2)));
 
 InputDecoration textInputDecorationAlert = InputDecoration(
-  labelStyle: TextStyle(color: Colors.black38),
+  labelStyle: TextStyle(color: ConstantColors.basicFontColor),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xFFFFC400), width: 2),
+    borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2),
     borderRadius: BorderRadius.circular(20),
   ),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xFFFFC400), width: 2),
+    borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2),
     borderRadius: BorderRadius.circular(20),
   ),
   errorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xFFFFC400), width: 2),
+    borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2),
     borderRadius: BorderRadius.circular(20),
   ),
   focusedErrorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xFFFFC400), width: 2),
+    borderSide: BorderSide(color: ConstantColors.primaryYellow, width: 2),
     borderRadius: BorderRadius.circular(20),
   ),
 );
@@ -37,12 +39,13 @@ const textStyle = TextStyle(
 );
 
 ButtonStyle buttonDecoration = ButtonStyle(
-  backgroundColor: MaterialStateProperty.all<Color>(const Color(0xFFFFC400)),
+  backgroundColor:
+      MaterialStateProperty.all<Color>(ConstantColors.primaryYellow),
   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
     RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(18.0),
-      side: const BorderSide(
-        color: Color(0xFFFFC400),
+      side: BorderSide(
+        color: ConstantColors.primaryYellow,
       ),
     ),
   ),
@@ -68,19 +71,20 @@ void showSnackBar(
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
       message,
-      style: const TextStyle(
-          fontSize: 15, fontWeight: FontWeight.w300, color: Colors.white),
+      style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w300,
+          color: ConstantColors.alterFontColor),
     ),
     backgroundColor: color,
     duration: const Duration(seconds: 3),
     action: SnackBarAction(
       label: "OK",
       onPressed: () {},
-      textColor: Colors.white,
+      textColor: ConstantColors.primaryYellow,
     ),
   ));
 }
-
 
 String getId(String value) {
   return value.substring(0, value.indexOf("_"));
@@ -89,4 +93,3 @@ String getId(String value) {
 String getName(String value) {
   return value.substring(value.indexOf('_') + 1);
 }
-

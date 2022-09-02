@@ -1,21 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../helper/helper_function.dart';
+import 'shared_preferences_service.dart';
 import 'database_service.dart';
 
 class AuthService {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   //login
-  Future loginWithEmailAndPassword(
-      {required String email, required String password}) async {
+  Future loginWithEmailAndPassword({required String email, required String password}) async {
     try {
-      User user = (await firebaseAuth.signInWithEmailAndPassword(
-              email: email, password: password))
-          .user!;
-      if (user != null) {
-        return true;
-      }
+      (await firebaseAuth.signInWithEmailAndPassword(email: email, password: password)).user!;
+      return true;
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -27,16 +21,18 @@ class AuthService {
       required String email,
       required String password}) async {
     try {
-      User user = (await firebaseAuth.createUserWithEmailAndPassword(
-              email: email, password: password))
-          .user!;
-      if (user != null) {
+      User user =
+      (await firebaseAuth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,)).user!;
+
         //call database service to save user data.
-        await DataBaseService(uid: user.uid)
-            .savingUserData(fullName: fullName, email: email);
+        await DataBaseService(uid: user.uid).savingUserData(
+            fullName: fullName,
+            email: email,
+        );
 
         return true;
-      }
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
@@ -45,9 +41,9 @@ class AuthService {
 //sign out
   Future signOut() async {
     try {
-      await HelperFunctions.saveUserLoggedInStatus(false);
-      await HelperFunctions.saveUserNameSF("");
-      await HelperFunctions.saveUserEmailSF("");
+      await SharedPreferenceService.saveUserLoggedInStatus(false);
+      await SharedPreferenceService.saveUserNameSF("");
+      await SharedPreferenceService.saveUserEmailSF("");
       await firebaseAuth.signOut();
     } catch (e) {
       return null;

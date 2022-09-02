@@ -1,4 +1,4 @@
-import 'package:basic_chat_app/helper/helper_function.dart';
+import 'package:basic_chat_app/service/shared_preferences_service.dart';
 import 'package:basic_chat_app/pages/home_page.dart';
 import 'package:basic_chat_app/service/auth_service.dart';
 import 'package:flutter/gestures.dart';
@@ -170,9 +170,9 @@ class _RegisterPageState extends State<RegisterPage> {
           .then((val) async {
         if (val == true) {
           //saving the share preferences state.
-          await HelperFunctions.saveUserLoggedInStatus(val);
-          await HelperFunctions.saveUserNameSF(fullName);
-          await HelperFunctions.saveUserEmailSF(email);
+          await SharedPreferenceService.saveUserLoggedInStatus(val);
+          await SharedPreferenceService.saveUserNameSF(fullName);
+          await SharedPreferenceService.saveUserEmailSF(email);
           nextScreenReplace(context: context, page: const HomePage());
 
         } else {

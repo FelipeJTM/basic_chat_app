@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 import '../service/auth_service.dart';
 import '../widgets/widgets.dart';
-import 'auth/login_page.dart';
+import 'login_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  String userName;
-  String email;
+  final String userName;
+  final String email;
 
-  ProfilePage({Key? key, required this.userName, required this.email})
+  const ProfilePage({Key? key, required this.userName, required this.email})
       : super(key: key);
 
   @override
@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 150, horizontal: 40),
+            padding: const EdgeInsets.symmetric(vertical: 150, horizontal: 40),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [

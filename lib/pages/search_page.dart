@@ -1,4 +1,4 @@
-import 'package:basic_chat_app/helper/helper_function.dart';
+import 'package:basic_chat_app/service/shared_preferences_service.dart';
 import 'package:basic_chat_app/models/group.dart';
 import 'package:basic_chat_app/pages/chat_page.dart';
 import 'package:basic_chat_app/service/database_service.dart';
@@ -15,7 +15,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool isLoading = false;
   QuerySnapshot? searchSnapshot;
   bool hasUserSearch = false;
@@ -34,7 +34,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   getCurrentUserIdAndName() async {
-    await HelperFunctions.getUserNameFromSF().then((value) {
+    await SharedPreferenceService.getUserNameFromSF().then((value) {
       setState(() {
         userName = value!;
       });

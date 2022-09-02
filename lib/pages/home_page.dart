@@ -1,14 +1,14 @@
 import 'package:basic_chat_app/pages/profile_page.dart';
-import 'package:basic_chat_app/pages/search_screen.dart';
+import 'package:basic_chat_app/pages/search_page.dart';
 import 'package:basic_chat_app/service/auth_service.dart';
 import 'package:basic_chat_app/service/database_service.dart';
 import 'package:basic_chat_app/widgets/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../helper/helper_function.dart';
+import '../service/shared_preferences_service.dart';
 import '../widgets/group_tile_widget.dart';
-import 'auth/login_page.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,8 +18,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  AuthService authService = AuthService();
-  Stream? groups;
+  AuthService authServiceInstance = AuthService();
+  Stream? groupsSnapshot;
   var userName = "";
   var email = "";
   bool _isLoading = false;
@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
                           ElevatedButton(
                             style: buttonDecoration,
                             onPressed: () async {
-                              authService.signOut().then((_) =>
+                              authServiceInstance.signOut().then((_) =>
                                   nextScreenReplace(
                                       page: const LoginPage(),
                                       context: context));
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getUserData() async {
-    await HelperFunctions.getUserEmailFromSF().then(
+    await SharedPreferenceService.getUserEmailFromSF().then(
       (value) {
         setState(
           () {
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
         );
       },
     );
-    await HelperFunctions.getUserNameFromSF().then(
+    await SharedPreferenceService.getUserNameFromSF().then(
       (value) {
         setState(
           () {
@@ -190,14 +190,14 @@ class _HomePageState extends State<HomePage> {
         .getUserGroups()
         .then((snapshot) {
       setState(() {
-        groups = snapshot;
+        groupsSnapshot = snapshot;
       });
     });
   }
 
   groupList() {
     return StreamBuilder(
-      stream: groups,
+      stream: groupsSnapshot,
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
           if (snapshot.data['groups'] != null) {

@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HelperFunctions {
+class SharedPreferenceService {
   //define keys
   static String userLoggedKey = "LOGGEDINKEY";
   static String userNameKey = "USERNAMEKEY";
@@ -21,7 +21,6 @@ class HelperFunctions {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.setString(userEmailKey, userEmail);
   }
-
 
   //get the key from firebase
   static Future<bool?> getUserLoggedInStatus() async {
