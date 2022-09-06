@@ -1,7 +1,7 @@
 import 'package:basic_chat_app/service/shared_preferences_service.dart';
 import 'package:basic_chat_app/pages/home_page.dart';
 import 'package:basic_chat_app/pages/login_page.dart';
-import 'package:basic_chat_app/shared/constants.dart';
+import 'package:basic_chat_app/constants/main.dart';
 import 'package:basic_chat_app/theme/palette_color.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,10 +13,10 @@ void main() async {
   if (kIsWeb) {
     await Firebase.initializeApp(
       options: FirebaseOptions(
-        apiKey: Constants.apiKey,
-        appId: Constants.appId,
-        messagingSenderId: Constants.messagingSenderId,
-        projectId: Constants.projectId,
+        apiKey: FireBaseConstants.apiKey,
+        appId: FireBaseConstants.appId,
+        messagingSenderId: FireBaseConstants.messagingSenderId,
+        projectId: FireBaseConstants.projectId,
       ),
     );
   } else {

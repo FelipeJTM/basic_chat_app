@@ -1,8 +1,10 @@
 import 'package:basic_chat_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/screen_nav_helper.dart';
 import '../service/auth_service.dart';
-import '../widgets/widgets.dart';
+import '../theme/form_decorations.dart';
+import '../widgets/general_purpose_widget.dart';
 import 'login_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -51,7 +53,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 onTap: () {
-                  nextScreen(context: context, page: const HomePage());
+                  ScreenNavHelper.nextScreen(context: context, page: const HomePage());
                 },
                 selectedColor: Theme.of(context).primaryColor,
                 selected: false,
@@ -89,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               const Text("Are you sure you want to leave?"),
                           actions: [
                             ElevatedButton(
-                              style: buttonDecoration.copyWith(
+                              style: FormDecorations.buttonDecoration.copyWith(
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
                                           Colors.white),
@@ -102,10 +104,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: const Text("Cancel"),
                             ),
                             ElevatedButton(
-                              style: buttonDecoration,
+                              style:FormDecorations.buttonDecoration,
                               onPressed: () async {
                                 authService.signOut().then((_) =>
-                                    nextScreenReplace(
+                                    ScreenNavHelper.nextScreenReplace(
                                         page: const LoginPage(),
                                         context: context));
                                 //Navigator.pop(context);

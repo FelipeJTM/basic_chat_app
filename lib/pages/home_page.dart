@@ -2,11 +2,14 @@ import 'package:basic_chat_app/pages/profile_page.dart';
 import 'package:basic_chat_app/pages/search_page.dart';
 import 'package:basic_chat_app/service/auth_service.dart';
 import 'package:basic_chat_app/service/database_service.dart';
-import 'package:basic_chat_app/widgets/widgets.dart';
+import 'package:basic_chat_app/widgets/general_purpose_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/screen_nav_helper.dart';
+import '../helper/string_format_helper.dart';
 import '../service/shared_preferences_service.dart';
+import '../theme/form_decorations.dart';
 import '../widgets/group_tile_widget.dart';
 import 'login_page.dart';
 
@@ -45,7 +48,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
               onPressed: () {
                 //authService.signOut();
-                nextScreen(context: context, page: const SearchPage());
+                ScreenNavHelper.nextScreen(context: context, page: const SearchPage());
               },
               icon: const Icon(Icons.search))
         ],
@@ -85,7 +88,7 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               onTap: () {
-                nextScreenReplace(
+                ScreenNavHelper.nextScreenReplace(
                     context: context,
                     page: ProfilePage(
                       userName: userName,
@@ -114,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                         content: const Text("Are you sure you want to leave?"),
                         actions: [
                           ElevatedButton(
-                            style: buttonDecoration.copyWith(
+                            style: FormDecorations.buttonDecoration.copyWith(
                                 backgroundColor:
                                     MaterialStateProperty.all<Color>(
                                         Colors.white),
@@ -127,10 +130,10 @@ class _HomePageState extends State<HomePage> {
                             child: const Text("Cancel"),
                           ),
                           ElevatedButton(
-                            style: buttonDecoration,
+                            style: FormDecorations.buttonDecoration,
                             onPressed: () async {
                               authServiceInstance.signOut().then((_) =>
-                                  nextScreenReplace(
+                                  ScreenNavHelper.nextScreenReplace(
                                       page: const LoginPage(),
                                       context: context));
                               //Navigator.pop(context);
@@ -207,9 +210,9 @@ class _HomePageState extends State<HomePage> {
                 itemBuilder: (context, index) {
                   int reversedIndex = snapshot.data["groups"].length - index-1;
                   return GroupTile(
-                    groupName: getName(snapshot.data["groups"][reversedIndex]),
+                    groupName: StringFormatHelper.getName(snapshot.data["groups"][reversedIndex]),
                     userName: snapshot.data["fullName"],
-                    groupId: getId(snapshot.data["groups"][reversedIndex]),
+                    groupId: StringFormatHelper.getId(snapshot.data["groups"][reversedIndex]),
                   );
                 },
               );
@@ -281,13 +284,13 @@ class _HomePageState extends State<HomePage> {
                       groupName = value;
                     });
                   },
-                  decoration: textInputDecorationAlert,
+                  decoration: FormDecorations.textInputDecorationAlert,
                 ),
               ],
             ),
             actions: [
               ElevatedButton(
-                style: buttonDecoration.copyWith(
+                style: FormDecorations.buttonDecoration.copyWith(
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),
                     foregroundColor: MaterialStateProperty.all<Color>(
@@ -298,7 +301,7 @@ class _HomePageState extends State<HomePage> {
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
-                style: buttonDecoration,
+                style: FormDecorations.buttonDecoration,
                 onPressed: () async {
                   if (groupName != "") {
                     setState(() {
@@ -314,7 +317,7 @@ class _HomePageState extends State<HomePage> {
                       });
                     });
                     Navigator.pop(context);
-                    showSnackBar(
+                    GeneralPurposeWidget.showSnackBar(
                         context: context,
                         message: "Group \"$groupName\" created successfully",
                         color: Colors.green);

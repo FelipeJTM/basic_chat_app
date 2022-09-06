@@ -1,11 +1,15 @@
-import 'package:basic_chat_app/helper/login_helper.dart';
+import 'package:basic_chat_app/helper/auth_helper.dart';
 import 'package:basic_chat_app/pages/register_page.dart';
 import 'package:basic_chat_app/service/auth_service.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-
-import '../widgets/widgets.dart';
+import '../constants/image_constants.dart';
+import '../helper/screen_nav_helper.dart';
+import '../models/form_config_data.dart';
+import '../theme/form_decorations.dart';
+import '../widgets/custom_form_widgets.dart';
+import '../widgets/loading_widget.dart';
+import '../widgets/general_purpose_widget.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,28 +23,23 @@ class _LoginPageState extends State<LoginPage> {
   final _loginKey = GlobalKey<FormState>();
   bool _amILogging = false;
   AuthService authenticationService = AuthService();
-  var formEmailValue = "";
-  var formPasswordValue = "";
+  var _formEmailValue = "";
+  var _formPasswordValue = "";
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: widgetSelector());
+    return Scaffold(
+      body: loginBody(),
+    );
   }
 
-  Widget widgetSelector() {
-    if (_amILogging) {
-      return loadingWidget();
-    } else {
-      return loginViewWidget();
-    }
+  Widget loginBody() {
+    if (_amILogging) return loadingWidget();
+    return loginViewWidget();
   }
 
   Widget loadingWidget() {
-    return Center(
-      child: CircularProgressIndicator(
-        color: Theme.of(context).primaryColor,
-      ),
-    );
+    return LoadingWidgets.simpleCircle(context);
   }
 
   Widget loginViewWidget() {
@@ -55,14 +54,8 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               titleWidget(),
-              const Text(
-                "Login now to see what they are talking!",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
-              ),
-              Image.asset(
-                "assets/login_image.png",
-                width: 290,
-              ),
+              subtitleWidget(),
+              mainImage(),
               const SizedBox(height: 20),
               formFieldEmailWidget(),
               const SizedBox(height: 20),
@@ -82,98 +75,84 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       height: 80,
       child: AnimatedTextKit(totalRepeatCount: 1, animatedTexts: [
-        TyperAnimatedText("Enjoy❤️", textStyle: textStyle),
-        TyperAnimatedText("Keep in touch🫂", textStyle: textStyle),
-        TyperAnimatedText("Fast chat⚡️", textStyle: textStyle),
+        TyperAnimatedText("Enjoy❤️", textStyle: FormDecorations.textStyle),
+        TyperAnimatedText("Keep in touch🫂",
+            textStyle: FormDecorations.textStyle),
+        TyperAnimatedText("Fast chat⚡️", textStyle: FormDecorations.textStyle),
       ]),
     );
   }
 
-  Widget formFieldEmailWidget() {
-    return TextFormField(
-      decoration: textInputDecorationForm.copyWith(
-          labelText: "Email",
-          prefixIcon: Icon(
-            Icons.email,
-            color: Theme.of(context).primaryColor,
-          )),
-      onChanged: (val) {
-        setState(() {
-          formEmailValue = val;
-        });
-      },
-      validator: (val) {
-        return RegExp(
-                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                .hasMatch(val!)
-            ? null
-            : "Please enter a valid email";
-      },
+  Widget subtitleWidget() {
+    return const Text(
+      "Login now to see what they are talking!",
+      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w300),
     );
+  }
+
+  Widget mainImage() {
+    return Image.asset(
+      ImageConstants.imageLogin1,
+      width: 290,
+    );
+  }
+
+  Widget formFieldEmailWidget() {
+    return CustomFormWidgets.textField(
+        context,
+        FormConfigData(
+          labelText: "Email",
+          icon: Icons.email,
+          assignNewValue: (mewValue) {
+            setState(() {
+              _formEmailValue = mewValue;
+            });
+          },
+          isItAnEmailField: true,
+        ));
   }
 
   Widget formFieldPasswordWidget() {
-    return TextFormField(
-      obscureText: true,
-      decoration: textInputDecorationForm.copyWith(
+    return CustomFormWidgets.textField(
+        context,
+        FormConfigData(
           labelText: "Password",
-          prefixIcon: Icon(
-            Icons.lock,
-            color: Theme.of(context).primaryColor,
-          )),
-      onChanged: (val) {
-        setState(() {
-          formPasswordValue = val;
-        });
-      },
-      validator: (val) {
-        if (val!.length < 6) {
-          return "Enter a password greater than 6 characters.";
-        } else {
-          return null;
-        }
-      },
-    );
-  }
-
-  Widget signInButtonWidget() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () async {
-          toggleLoadingIndicator();
-          LoginHelper loginHelperInstance = createLoginHelperInstance();
-          bool loginStatus = await loginIn(helperInstance: loginHelperInstance);
-          bool saveDataStatus = loginStatus
-              ? await saveData(helperInstance: loginHelperInstance, loginStatus: loginStatus)
-              : false;
-          proceedToHome(loginStatus: loginStatus, dataStatus: saveDataStatus);
-          toggleLoadingIndicator();
-        },
-        style: buttonDecoration,
-        child: const Text("Sign in"),
-      ),
-    );
+          icon: Icons.lock,
+          assignNewValue: (mewValue) {
+            setState(() {
+              _formPasswordValue = mewValue;
+            });
+          },
+          hideText: true,
+        ));
   }
 
   Widget createAccountWidget() {
-    return Text.rich(
-      TextSpan(
-        text: "Don't have an account? ",
-        style: const TextStyle(
-            fontSize: 15, fontWeight: FontWeight.w300, color: Colors.black),
-        children: <TextSpan>[
-          TextSpan(
-              text: "Register now",
-              style: const TextStyle(
-                  color: Colors.black, decoration: TextDecoration.underline),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  nextScreen(context: context, page: const RegisterPage());
-                }),
-        ],
-      ),
-    );
+    return GeneralPurposeWidget.bottomMessageWithLink(
+        context: context,
+        mainPhrase: "Don't have an account? ",
+        linkPhrase: "Register now",
+        navigationFunction: () {
+          ScreenNavHelper.nextScreen(
+            context: context,
+            page: const RegisterPage(),
+          );
+        });
+  }
+
+  Widget signInButtonWidget() {
+    return CustomFormWidgets.button("Sign in", () => loginButtonEvent());
+  }
+
+  void loginButtonEvent() async {
+    toggleLoadingIndicator();
+    AuthHelper loginHelper = createAuthHelperInstance();
+    bool loginStatus = await loginIn(helperInstance: loginHelper);
+    bool saveDataStatus = loginStatus
+        ? await saveData(helperInstance: loginHelper, loginStatus: loginStatus)
+        : false;
+    proceedToHome(loginStatus: loginStatus, dataStatus: saveDataStatus);
+    toggleLoadingIndicator();
   }
 
   void toggleLoadingIndicator() {
@@ -182,12 +161,15 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  LoginHelper createLoginHelperInstance() {
-    return LoginHelper.initialize(
-        formEmailValue, formPasswordValue, authenticationService);
+  AuthHelper createAuthHelperInstance() {
+    return AuthHelper.initialize(
+      formEmailValue: _formEmailValue,
+      formPasswordValue: _formPasswordValue,
+      authService: authenticationService,
+    );
   }
 
-  Future<bool> loginIn({required LoginHelper helperInstance}) async {
+  Future<bool> loginIn({required AuthHelper helperInstance}) async {
     if (!formIsValid()) return false;
     try {
       return await helperInstance.login();
@@ -202,19 +184,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void failedToLogin(dynamic response) {
-    showSnackBar(context: context, message: response, color: Colors.red);
+    GeneralPurposeWidget.showSnackBar(
+        context: context, message: response, color: Colors.red);
   }
 
-  Future<bool> saveData({
-    required bool loginStatus,
-    required LoginHelper helperInstance,
-  }) async {
-    return await helperInstance.saveDataSnapshot(status: loginStatus);
+  Future<bool> saveData(
+      {required bool loginStatus, required AuthHelper helperInstance}) async {
+    return await helperInstance.saveLoginDataSnapshot(status: loginStatus);
   }
 
   void proceedToHome({required bool loginStatus, required bool dataStatus}) {
     if (loginStatus && dataStatus) {
-      nextScreenReplace(context: context, page: const HomePage());
+      ScreenNavHelper.nextScreenReplace(
+          context: context, page: const HomePage());
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:basic_chat_app/models/group.dart';
-import 'package:basic_chat_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/screen_nav_helper.dart';
 import '../pages/chat_page.dart';
 
 class GroupTile extends StatefulWidget {
@@ -25,7 +25,7 @@ class _GroupTileState extends State<GroupTile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        nextScreen(
+        ScreenNavHelper.nextScreen(
             context: context,
             page: ChatPage(
               groupInformation:

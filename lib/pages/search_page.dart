@@ -1,3 +1,4 @@
+import 'package:basic_chat_app/helper/string_format_helper.dart';
 import 'package:basic_chat_app/service/shared_preferences_service.dart';
 import 'package:basic_chat_app/models/group.dart';
 import 'package:basic_chat_app/pages/chat_page.dart';
@@ -5,7 +6,8 @@ import 'package:basic_chat_app/service/database_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../widgets/widgets.dart';
+import '../helper/screen_nav_helper.dart';
+import '../widgets/general_purpose_widget.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -170,7 +172,7 @@ class _SearchPageState extends State<SearchPage> {
           groupName,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        subtitle: Text("Admin: ${getName(admin)}"),
+        subtitle: Text("Admin: ${StringFormatHelper.getName(admin)}"),
         trailing: InkWell(
           onTap: () async {
             await DataBaseService(uid: user!.uid)
@@ -179,12 +181,12 @@ class _SearchPageState extends State<SearchPage> {
               setState(() {
                 isJoined = !isJoined;
               });
-              showSnackBar(
+              GeneralPurposeWidget.showSnackBar(
                   context: context,
                   message: "Successfully Joined the group",
                   color: Colors.green);
               Future.delayed(const Duration(seconds: 2), () {
-                nextScreen(
+                ScreenNavHelper.nextScreen(
                     context: context,
                     page: ChatPage(
                       groupInformation: Group(groupId, groupName, userName),
@@ -194,7 +196,7 @@ class _SearchPageState extends State<SearchPage> {
               setState(() {
                 isJoined = !isJoined;
               });
-              showSnackBar(
+              GeneralPurposeWidget.showSnackBar(
                   context: context,
                   message: "Left the group",
                   color: Colors.red);

@@ -1,10 +1,10 @@
 import 'package:basic_chat_app/models/message.dart';
 import 'package:basic_chat_app/service/database_service.dart';
 import 'package:basic_chat_app/widgets/message_tile.dart';
-import 'package:basic_chat_app/widgets/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../helper/screen_nav_helper.dart';
 import '../models/group.dart';
 import 'group_info.dart';
 
@@ -66,7 +66,7 @@ class _ChatPageState extends State<ChatPage> {
             child: IconButton(
               icon: const Icon(Icons.info),
               onPressed: () {
-                nextScreen(
+                ScreenNavHelper.nextScreen(
                     context: context,
                     page: GroupInfo(
                       groupName: widget.groupInformation.getName,
