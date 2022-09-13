@@ -152,19 +152,21 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget registerButtonWidget() {
-    return CustomFormWidgets.button("Register", () => registerButtonEvent());
+    return CustomFormWidgets.button("Register", () => registerButtonActionEvent());
   }
 
-  registerButtonEvent() async {
+  void registerButtonActionEvent() async {
+    if (!formIsValid()) return;
     toggleLoadingIndicator();
     AuthHelper registerHelper = createAuthHelperInstance();
-    bool registerStatus = await registerUser(helperInstance: registerHelper);
-    bool saveDataStatus = registerStatus
-        ? await saveUserData(
-            helperInstance: registerHelper, loginStatus: registerStatus)
-        : false;
-    proceedToHome(loginStatus: registerStatus, dataStatus: saveDataStatus);
+    var registerStatus = await registerUser(helperInstance: registerHelper);
+    var saveDataStatus = await saveUserDataAndStatus(registerStatus, registerHelper);
+    attemptToGoHome(registerStatus, saveDataStatus);
     toggleLoadingIndicator();
+  }
+
+  bool formIsValid() {
+    return _registerKey.currentState!.validate();
   }
 
   void toggleLoadingIndicator() {
@@ -182,18 +184,38 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Future<bool> registerUser({required AuthHelper helperInstance}) async {
-    if (!formIsValid()) return false;
+  Future<dynamic> registerUser({required AuthHelper helperInstance}) async {
     try {
       return await helperInstance.register();
     } catch (exception) {
       failedToRegister(exception.toString());
-      return false;
+      return null;
     }
   }
 
-  bool formIsValid() {
-    return _registerKey.currentState!.validate();
+  dynamic saveUserDataAndStatus(var status, AuthHelper helperInstance) async {
+    if (isValidStatus(status)) {
+      return await helperInstance.saveRegisterData(status: status);
+    }
+    return null;
+  }
+
+  dynamic isValidStatus(var status) {
+    if (status != null && status) return true;
+    return false;
+  }
+
+  dynamic registerAndSaveAreSuccessful(var registerStatus, var dataStatus) {
+    if (isValidStatus(registerStatus) && isValidStatus(dataStatus)) return true;
+    return false;
+  }
+
+  void attemptToGoHome(var registerStatus, var saveUserData) {
+    if (registerAndSaveAreSuccessful(registerStatus, saveUserData)) {
+      ScreenNavHelper.nextScreenReplace(ctx: context, page: const HomePage());
+    } else {
+      failedToRegister("Algo salio mal, intenta mas tarde...");
+    }
   }
 
   void failedToRegister(dynamic response) {
@@ -201,15 +223,4 @@ class _RegisterPageState extends State<RegisterPage> {
         context: context, message: response, color: Colors.red);
   }
 
-  Future<bool> saveUserData(
-      {required bool loginStatus, required AuthHelper helperInstance}) async {
-    return await helperInstance.saveRegisterData(status: loginStatus);
-  }
-
-  void proceedToHome({required bool loginStatus, required bool dataStatus}) {
-    if (loginStatus && dataStatus) {
-      ScreenNavHelper.nextScreenReplace(
-          context: context, page: const HomePage());
-    }
-  }
 }

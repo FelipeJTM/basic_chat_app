@@ -7,9 +7,9 @@ class ScreenNavHelper {
   }
 
   static void nextScreenReplace(
-      {required BuildContext context, required Widget page}) {
+      {required BuildContext ctx, required Widget page}) {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => page));
+        ctx, MaterialPageRoute(builder: (context) => page));
   }
 
   static void popScreen({required BuildContext context}) {

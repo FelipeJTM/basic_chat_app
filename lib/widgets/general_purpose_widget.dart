@@ -1,7 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../models/dialog_parameters.dart';
 import '../theme/constant_colors.dart';
+import '../theme/form_decorations.dart';
 
 class GeneralPurposeWidget {
   static void showSnackBar(
@@ -55,4 +57,29 @@ class GeneralPurposeWidget {
       ),
     );
   }
+
+  static generalDialog({required BuildContext ctx,required DialogParameters dialogParams}) {
+    return AlertDialog(
+      title: Text(dialogParams.title),
+      content: dialogParams.content,
+      actions: [
+        ElevatedButton(
+          style: FormDecorations.buttonDecoration.copyWith(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              foregroundColor:
+                  MaterialStateProperty.all<Color>(Theme.of(ctx).primaryColor)),
+          onPressed: () {
+            Navigator.pop(ctx);
+          },
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          style: FormDecorations.buttonDecoration,
+          onPressed: ()=>dialogParams.onPressed(),
+          child: Text((dialogParams.okButtonText) ?? "Ok"),
+        )
+      ],
+    );
+  }
 }
+

@@ -141,18 +141,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget signInButtonWidget() {
-    return CustomFormWidgets.button("Sign in", () => loginButtonEvent());
+    return CustomFormWidgets.button("Sign in", () => loginButtonActionEvent());
   }
 
-  void loginButtonEvent() async {
+  void loginButtonActionEvent() async {
+    if (!formIsValid()) return;
     toggleLoadingIndicator();
     AuthHelper loginHelper = createAuthHelperInstance();
-    bool loginStatus = await loginIn(helperInstance: loginHelper);
-    bool saveDataStatus = loginStatus
-        ? await saveData(helperInstance: loginHelper, loginStatus: loginStatus)
-        : false;
-    proceedToHome(loginStatus: loginStatus, dataStatus: saveDataStatus);
+    var loginStatus = await loginIn(helperInstance: loginHelper);
+    var saveDataStatus = await saveUserDataAndStatus(loginStatus, loginHelper);
+    attemptToGoHome(loginStatus, saveDataStatus);
     toggleLoadingIndicator();
+  }
+
+  bool formIsValid() {
+    return _loginKey.currentState!.validate();
   }
 
   void toggleLoadingIndicator() {
@@ -169,34 +172,42 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<bool> loginIn({required AuthHelper helperInstance}) async {
-    if (!formIsValid()) return false;
+  Future<dynamic> loginIn({required AuthHelper helperInstance}) async {
     try {
       return await helperInstance.login();
     } catch (exception) {
       failedToLogin(exception.toString());
-      return false;
+      return null;
     }
   }
 
-  bool formIsValid() {
-    return _loginKey.currentState!.validate();
+  dynamic saveUserDataAndStatus(var status, AuthHelper helperInstance) async {
+    if (isValidStatus(status)) {
+      return await helperInstance.saveLoginDataSnapshot(status: status);
+    }
+    return null;
+  }
+
+  dynamic isValidStatus(var status) {
+    if (status != null && status) return true;
+    return false;
+  }
+
+  dynamic loginAndSaveAreSuccessful(var loginStatus, var dataStatus) {
+    if (isValidStatus(loginStatus) && isValidStatus(dataStatus)) return true;
+    return false;
+  }
+
+  void attemptToGoHome(var loginStatus, var dataStatus) {
+    if (loginAndSaveAreSuccessful(loginStatus, dataStatus)) {
+      ScreenNavHelper.nextScreenReplace(ctx: context, page: const HomePage());
+    } else {
+      failedToLogin("Algo salio mal, intenta mas tarde...");
+    }
   }
 
   void failedToLogin(dynamic response) {
     GeneralPurposeWidget.showSnackBar(
         context: context, message: response, color: Colors.red);
-  }
-
-  Future<bool> saveData(
-      {required bool loginStatus, required AuthHelper helperInstance}) async {
-    return await helperInstance.saveLoginDataSnapshot(status: loginStatus);
-  }
-
-  void proceedToHome({required bool loginStatus, required bool dataStatus}) {
-    if (loginStatus && dataStatus) {
-      ScreenNavHelper.nextScreenReplace(
-          context: context, page: const HomePage());
-    }
   }
 }

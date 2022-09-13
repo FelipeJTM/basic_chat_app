@@ -25,7 +25,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-enum signInStatus {
+enum SignInStatus {
   UNKNOWN,
   LOGGED,
   UNLOGGED,
@@ -39,7 +39,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  signInStatus _isSignedIn = signInStatus.UNKNOWN;
+  SignInStatus _isSignedIn = SignInStatus.UNKNOWN;
 
   @override
   void initState() {
@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
     await SharedPreferenceService.getUserLoggedInStatus().then((value) {
       if (value != null) {
         setState(() {
-          _isSignedIn = (value) ? signInStatus.LOGGED : signInStatus.UNLOGGED;
+          _isSignedIn = (value) ? SignInStatus.LOGGED : SignInStatus.UNLOGGED;
         });
       }
     });
@@ -68,11 +68,11 @@ class _MyAppState extends State<MyApp> {
 
   Widget pageSelector() {
     switch (_isSignedIn) {
-      case signInStatus.UNKNOWN:
+      case SignInStatus.UNKNOWN:
         return emptyWidget();
-      case signInStatus.LOGGED:
+      case SignInStatus.LOGGED:
         return const HomePage();
-      case signInStatus.UNLOGGED:
+      case SignInStatus.UNLOGGED:
         return const LoginPage();
     }
   }

@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import '../helper/screen_nav_helper.dart';
 import '../service/auth_service.dart';
 import '../theme/form_decorations.dart';
-import '../widgets/general_purpose_widget.dart';
 import 'login_page.dart';
-
+//Todo: refactor this one
 class ProfilePage extends StatefulWidget {
   final String userName;
   final String email;
@@ -109,7 +108,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 authService.signOut().then((_) =>
                                     ScreenNavHelper.nextScreenReplace(
                                         page: const LoginPage(),
-                                        context: context));
+                                        ctx: context));
                                 //Navigator.pop(context);
                               },
                               child: const Text("Logout"),
