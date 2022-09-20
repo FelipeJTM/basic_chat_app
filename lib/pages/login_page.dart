@@ -7,9 +7,9 @@ import '../constants/image_constants.dart';
 import '../helper/screen_nav_helper.dart';
 import '../models/form_config_data.dart';
 import '../theme/form_decorations.dart';
-import '../widgets/custom_form_widgets.dart';
+import '../widgets/form_widgets.dart';
 import '../widgets/loading_widget.dart';
-import '../widgets/general_purpose_widget.dart';
+import '../widgets/general_custom_widget.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {

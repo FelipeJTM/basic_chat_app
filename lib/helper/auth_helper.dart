@@ -62,27 +62,27 @@ class AuthHelper {
   }
 
   Future<void> saveLoggedInStatus({required bool loginStatus}) async {
-    await SharedPreferenceService.saveUserLoggedInStatus(loginStatus);
+    await SharedPreferenceService.saveUserLoggedInStatusIntoSP(loginStatus);
   }
 
   Future<void> saveUserEmail() async {
-    await SharedPreferenceService.saveUserEmailSF(formEmailValue);
+    await SharedPreferenceService.saveUserEmailSP(formEmailValue);
   }
 
   Future<void> saveUserName() async {
-    await SharedPreferenceService.saveUserNameSF(fullUserName!);
+    await SharedPreferenceService.saveUserNameSP(fullUserName!);
   }
 
   Future<void> saveUserNameFromSnapshot(
       {required QuerySnapshot snapshot}) async {
-    await SharedPreferenceService.saveUserNameSF(snapshot.docs[0]['fullName']);
+    await SharedPreferenceService.saveUserNameSP(snapshot.docs[0]['fullName']);
   }
 
   static Future cleanUserInfo() async {
     try {
-      await SharedPreferenceService.saveUserLoggedInStatus(false);
-      await SharedPreferenceService.saveUserNameSF("");
-      await SharedPreferenceService.saveUserEmailSF("");
+      await SharedPreferenceService.saveUserLoggedInStatusIntoSP(false);
+      await SharedPreferenceService.saveUserNameSP("");
+      await SharedPreferenceService.saveUserEmailSP("");
     } catch (e) {
       return null;
     }

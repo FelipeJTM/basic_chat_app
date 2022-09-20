@@ -4,11 +4,11 @@ import 'package:basic_chat_app/service/auth_service.dart';
 import 'package:basic_chat_app/theme/form_decorations.dart';
 import "package:flutter/material.dart";
 
-import '../../widgets/general_purpose_widget.dart';
+import '../../widgets/general_custom_widget.dart';
 import '../helper/auth_helper.dart';
 import '../helper/screen_nav_helper.dart';
 import '../models/form_config_data.dart';
-import '../widgets/custom_form_widgets.dart';
+import '../widgets/form_widgets.dart';
 import '../widgets/loading_widget.dart';
 
 class RegisterPage extends StatefulWidget {

@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getUserLoggedInStatus() async {
-    await SharedPreferenceService.getUserLoggedInStatus().then((value) {
+    await SharedPreferenceService.getUserLoggedInStatusFromSP().then((value) {
       if (value != null) {
         setState(() {
           _isSignedIn = (value) ? SignInStatus.LOGGED : SignInStatus.UNLOGGED;

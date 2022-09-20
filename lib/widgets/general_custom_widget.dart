@@ -1,15 +1,17 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../models/app_bar_parameters.dart';
 import '../models/dialog_parameters.dart';
 import '../theme/constant_colors.dart';
 import '../theme/form_decorations.dart';
 
 class GeneralPurposeWidget {
-  static void showSnackBar(
-      {required BuildContext context,
-      required String message,
-      required Color color}) {
+  static void showSnackBar({
+    required BuildContext context,
+    required String message,
+    required Color color,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(
         message,
@@ -58,7 +60,10 @@ class GeneralPurposeWidget {
     );
   }
 
-  static generalDialog({required BuildContext ctx,required DialogParameters dialogParams}) {
+  static generalDialog({
+    required BuildContext ctx,
+    required DialogParameters dialogParams,
+  }) {
     return AlertDialog(
       title: Text(dialogParams.title),
       content: dialogParams.content,
@@ -75,11 +80,24 @@ class GeneralPurposeWidget {
         ),
         ElevatedButton(
           style: FormDecorations.buttonDecoration,
-          onPressed: ()=>dialogParams.onPressed(),
+          onPressed: () => dialogParams.onPressed(),
           child: Text((dialogParams.okButtonText) ?? "Ok"),
         )
       ],
     );
   }
-}
 
+  static AppBar appBar({
+    required BuildContext ctx,
+    required AppBarParameters appBarParameters,
+  }) {
+    return AppBar(
+        elevation: 0,
+        backgroundColor: Theme.of(ctx).primaryColor,
+        title: Text(
+          appBarParameters.title,
+          style: const TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+        ),
+        actions: appBarParameters.actions);
+  }
+}

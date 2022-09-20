@@ -105,12 +105,11 @@ class DataBaseService {
   }
 
   //toggling the group join/exit
-  Future toggleGroupJoin(
-      String groupId, String userName, String groupName) async {
+  Future toggleGroupJoin(String groupId, String userName, String groupName) async {
     DocumentReference userDocumentReference = userCollection.doc(uid);
     DocumentReference groupDocumentReference = groupCollection.doc(groupId);
-
     DocumentSnapshot documentSnapshot = await userDocumentReference.get();
+
     List<dynamic> groups = await documentSnapshot['groups'];
 
     //if user is in group => remove him, or if he isn't add him.

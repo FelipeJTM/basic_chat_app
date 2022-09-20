@@ -2,21 +2,20 @@ import 'package:basic_chat_app/pages/profile_page.dart';
 import 'package:basic_chat_app/pages/search_page.dart';
 import 'package:basic_chat_app/service/auth_service.dart';
 import 'package:basic_chat_app/service/database_service.dart';
-import 'package:basic_chat_app/widgets/general_purpose_widget.dart';
+import 'package:basic_chat_app/widgets/general_custom_widget.dart';
 import 'package:basic_chat_app/widgets/loading_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../helper/screen_nav_helper.dart';
 import '../helper/string_format_helper.dart';
+import '../models/app_bar_parameters.dart';
 import '../models/dialog_parameters.dart';
-import '../models/drawer_tile_parameters.dart';
+import '../models/drawer_data.dart';
 import '../models/group_tile_parameters.dart';
 import '../service/shared_preferences_service.dart';
 import '../theme/form_decorations.dart';
-import '../widgets/drawer_widgets.dart';
+import '../widgets/drawer/drawer_widget.dart';
 import '../widgets/group_tile_widget.dart';
-import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -39,6 +38,43 @@ class _HomePageState extends State<HomePage> {
     assignUserData();
   }
 
+  void assignUserData() async {
+    assignEmail(await getEmail());
+    assignUserName(await getUserName());
+    assignGroupSnapshot(await getGroupSnapshot());
+  }
+
+  Future<String?> getEmail() async {
+    return await SharedPreferenceService.getUserEmailFromSP();
+  }
+
+  void assignEmail(var newValue) {
+    setState(() {
+      email = (newValue != null) ? newValue : "the data was null";
+    });
+  }
+
+  Future<String?> getUserName() async {
+    return await SharedPreferenceService.getUserNameFromSP();
+  }
+
+  void assignUserName(var newValue) {
+    setState(() {
+      userName = (newValue != null) ? newValue : "the data was null";
+    });
+  }
+
+  Future<Stream> getGroupSnapshot() async {
+    return await DataBaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+        .getUserGroups();
+  }
+
+  void assignGroupSnapshot(Stream snapshot) {
+    setState(() {
+      groupsSnapshot = snapshot;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,50 +86,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   AppBar appBar() {
-    return AppBar(
-      backgroundColor: Theme.of(context).primaryColor,
-      title: const Text(
-        "Groups",
-        style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
-      ),
-      actions: [
-        IconButton(
-            onPressed: () => goToSearchPage(), icon: const Icon(Icons.search))
-      ],
-    );
+    return GeneralPurposeWidget.appBar(
+        ctx: context,
+        appBarParameters: AppBarParameters(
+          title: "Groups",
+          actions: [
+            IconButton(
+                onPressed: () => goToSearchPage(),
+                icon: const Icon(Icons.search))
+          ],
+        ));
   }
 
-  Drawer drawer() {
-    return Drawer(
-      child: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 50),
-        children: <Widget>[
-          DrawerWidgets.userInfo(displayName: userName),
-          const SizedBox(height: 30),
-          DrawerWidgets.drawerTile(
-              ctx: context,
-              tileParams: DrawerTileParameters(
-                onTap: () {},
-                isSelected: true,
-                icon: Icons.group,
-                title: "Groups",
-              )),
-          DrawerWidgets.drawerTile(
-              ctx: context,
-              tileParams: DrawerTileParameters(
-                  onTap: goToProfilePage,
-                  isSelected: false,
-                  icon: Icons.person_pin,
-                  title: "Profile")),
-          DrawerWidgets.drawerTile(
-              ctx: context,
-              tileParams: DrawerTileParameters(
-                  onTap: showExitDialog,
-                  isSelected: false,
-                  icon: Icons.exit_to_app,
-                  title: "Exit")),
-        ],
-      ),
+  Widget drawer() {
+    return DrawerWidget(
+      drawerData: DrawerData(
+          authServiceInstance: authServiceInstance,
+          groupFunction: () {},
+          profileFunction: goToProfilePage,
+          currentPage: Selected.groups,
+          userName: userName),
     );
   }
 
@@ -159,43 +171,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void assignUserData() async {
-    assignEmail(await getEmail());
-    assignUserName(await getUserName());
-    assignGroupSnapshot(await getGroupSnapshot());
-  }
-
-  Future<String?> getEmail() async {
-    return await SharedPreferenceService.getUserEmailFromSF();
-  }
-
-  void assignEmail(var newValue) {
-    setState(() {
-      email = (newValue != null) ? newValue : "the data was null";
-    });
-  }
-
-  Future<String?> getUserName() async {
-    return await SharedPreferenceService.getUserNameFromSF();
-  }
-
-  void assignUserName(var newValue) {
-    setState(() {
-      userName = (newValue != null) ? newValue : "the data was null";
-    });
-  }
-
-  Future<Stream> getGroupSnapshot() async {
-    return await DataBaseService(uid: FirebaseAuth.instance.currentUser!.uid)
-        .getUserGroups();
-  }
-
-  void assignGroupSnapshot(Stream snapshot) {
-    setState(() {
-      groupsSnapshot = snapshot;
-    });
-  }
-
   void goToSearchPage() {
     ScreenNavHelper.nextScreen(context: context, page: const SearchPage());
   }
@@ -207,26 +182,6 @@ class _HomePageState extends State<HomePage> {
           userName: userName,
           email: email,
         ));
-  }
-
-  void showExitDialog() {
-    showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (context) {
-          return GeneralPurposeWidget.generalDialog(
-            ctx: context,
-            dialogParams: DialogParameters(
-              title: "Logout",
-              content: const Text("Are you sure you want to leave?"),
-              onPressed: () async {
-                authServiceInstance.signOut().then((_) =>
-                    ScreenNavHelper.nextScreenReplace(
-                        page: const LoginPage(), ctx: context));
-              },
-            ),
-          );
-        });
   }
 
   void showCreateGroupDialog(BuildContext context) {
@@ -244,16 +199,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   Widget createGroupContent() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        (_isLoading)
-            ? Center(
-                child: CircularProgressIndicator(
-                    color: Theme.of(context).primaryColor))
-            : const SizedBox.shrink(),
+        showLoadingIndicatorIf(_isLoading),
         TextField(
           onChanged: (value) {
             setState(() {
@@ -267,18 +217,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   void onPressCreateGroup() async {
-    if (groupName != "") {
-      toggleIsLoading();
-      var uid = FirebaseAuth.instance.currentUser!.uid;
-      await DataBaseService(uid: uid)
-          .createGroup(userName: userName, id: uid, groupName: groupName);
-      toggleIsLoading();
-      dismissDialog();
-      GeneralPurposeWidget.showSnackBar(
-          context: context,
-          message: "Group \"$groupName\" created successfully",
-          color: Colors.green);
-    }
+    if (groupName == "") return;
+    toggleIsLoading();
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    await DataBaseService(uid: uid).createGroup(userName: userName, id: uid, groupName: groupName);
+    toggleIsLoading();
+    dismissDialog();
+    GeneralPurposeWidget.showSnackBar(
+      context: context,
+      message: "Group \"$groupName\" created successfully",
+      color: Colors.green,
+    );
+  }
+
+  Widget showLoadingIndicatorIf(bool isLoading) {
+    if (!_isLoading) return const SizedBox.shrink();
+    return Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor));
   }
 
   void toggleIsLoading() {
@@ -295,5 +249,4 @@ class _HomePageState extends State<HomePage> {
     if (list == null || list.isEmpty) return true;
     return false;
   }
-
 }

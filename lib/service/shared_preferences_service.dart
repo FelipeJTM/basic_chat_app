@@ -1,40 +1,34 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceService {
-  //define keys
+
   static String userLoggedKey = "LOGGEDINKEY";
   static String userNameKey = "USERNAMEKEY";
   static String userEmailKey = "USERMAILKEY";
 
-  //store the key to SF
-  static Future<bool> saveUserLoggedInStatus(bool isUserLoggedIn) async {
+  static Future<bool> saveUserLoggedInStatusIntoSP(bool isUserLoggedIn) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.setBool(userLoggedKey, isUserLoggedIn);
   }
-  //store the username to SF
-  static Future<bool> saveUserNameSF(String userName) async {
+  static Future<bool> saveUserNameSP(String userName) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.setString(userNameKey, userName);
   }
-  //store the email to SF
-  static Future<bool> saveUserEmailSF(String userEmail) async {
+  static Future<bool> saveUserEmailSP(String userEmail) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.setString(userEmailKey, userEmail);
   }
 
-  //get the key from firebase
-  static Future<bool?> getUserLoggedInStatus() async {
+  static Future<bool?> getUserLoggedInStatusFromSP() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.getBool(userLoggedKey);
   }
 
-  //get the key from firebase
-  static Future<String?> getUserEmailFromSF() async {
+  static Future<String?> getUserEmailFromSP() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.getString(userEmailKey);
   }
-  //get the key from firebase
-  static Future<String?> getUserNameFromSF() async {
+  static Future<String?> getUserNameFromSP() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return sf.getString(userNameKey);
   }

@@ -58,7 +58,6 @@ class _GroupTileState extends State<GroupTile> {
 }
 
 class GroupTileWidget {
-
   static Widget groupTile({
     required BuildContext ctx,
     required GroupTileParameters groupTileParams,
@@ -68,8 +67,11 @@ class GroupTileWidget {
         ScreenNavHelper.nextScreen(
             context: ctx,
             page: ChatPage(
-              groupInformation: Group(groupTileParams.groupId,
-                  groupTileParams.groupName, groupTileParams.groupName),
+              groupInformation: Group(
+                groupTileParams.groupId,
+                groupTileParams.groupName,
+                groupTileParams.userName,
+              ),
             ));
       },
       child: Container(
@@ -96,5 +98,3 @@ class GroupTileWidget {
     );
   }
 }
-
-
